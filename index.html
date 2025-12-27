@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هوش مصنوعی یادگیرنده</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .ai-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .ai-visual {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .ai-brain {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .brain-core {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .growth-bar-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .growth-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .growth-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .growth-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .info-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .stat-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .learning-log {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .log-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .log-entry {
+            padding: 8px;
+            margin-bottom: 5px;
+            background: white;
+            border-radius: 5px;
+            font-size: 0.9em;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-stop {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .age-indicator {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .knowledge-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .topic-badge {
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85em;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 هوش مصنوعی یادگیرنده</h1>
+
+        <div class="ai-container">
+            <div class="ai-visual">
+                <div class="ai-brain">
+                    <div class="brain-core" id="brainCore">🤖</div>
+                </div>
+                <div class="age-indicator" id="ageIndicator">سن: نوزاد</div>
+                <div class="growth-bar-container">
+                    <div class="growth-label">میزان رشد و یادگیری</div>
+                    <div class="growth-bar">
+                        <div class="growth-fill" id="growthFill">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="stat-box">
+                    <div class="stat-title">📚 تعداد مطالب یاد گرفته شده</div>
+                    <div class="stat-value" id="itemsLearned">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">🌐 وب‌سایت‌های بازدید شده</div>
+                    <div class="stat-value" id="sitesVisited">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">🎓 سطح دانش</div>
+                    <div class="stat-value" id="knowledgeLevel">مبتدی</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">⚡ حالت فعلی</div>
+                    <div class="stat-value" id="currentStatus">در انتظار شروع</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="learning-log">
+            <div class="log-title">📋 گزارش یادگیری لحظه‌ای</div>
+            <div id="logContainer"></div>
+        </div>
+
+        <div class="stat-box" style="margin-top: 20px;">
+            <div class="stat-title">🏷️ موضوعات یاد گرفته شده</div>
+            <div class="knowledge-topics" id="knowledgeTopics">
+                <span style="color: #999;">هنوز موضوعی یاد نگرفته است...</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-start" id="startBtn">▶️ شروع یادگیری</button>
+            <button class="btn-stop" id="stopBtn" style="display:none;">⏸️ توقف</button>
+            <button class="btn-reset" id="resetBtn">🔄 شروع مجدد</button>
+        </div>
+    </div>
+
+    <script>
+        class LearningAI {
+            constructor() {
+                this.knowledge = 0;
+                this.itemsLearned = 0;
+                this.sitesVisited = 0;
+                this.isLearning = false;
+                this.age = 0;
+                this.learningTopics = [];
+                this.logEntries = [];
+
+                this.websites = [
+                    { name: 'ویکی‌پدیا', topics: ['تاریخ', 'علوم', 'فلسفه', 'ریاضیات'] },
+                    { name: 'کورسرا', topics: ['برنامه‌نویسی', 'هوش مصنوعی', 'علوم داده', 'مدیریت'] },
+                    { name: 'خان آکادمی', topics: ['ریاضیات', 'فیزیک', 'شیمی', 'زیست‌شناسی'] },
+                    { name: 'Stack Overflow', topics: ['کدنویسی', 'الگوریتم', 'دیباگ', 'بهینه‌سازی'] },
+                    { name: 'MIT OpenCourseWare', topics: ['مهندسی', 'علوم کامپیوتر', 'اقتصاد', 'فیزیک'] },
+                    { name: 'Medium', topics: ['تکنولوژی', 'کسب‌وکار', 'نوآوری', 'یادگیری ماشین'] },
+                    { name: 'GitHub', topics: ['پروژه‌های متن‌باز', 'همکاری', 'کد', 'مستندسازی'] },
+                    { name: 'TED-Ed', topics: ['خلاقیت', 'رهبری', 'علم', 'هنر'] }
+                ];
+
+                this.init();
+            }
+
+            init() {
+                document.getElementById('startBtn').addEventListener('click', () => this.start());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+                document.getElementById('resetBtn').addEventListener('click', () => this.reset());
+            }
+
+            start() {
+                if (this.isLearning) return;
+
+                this.isLearning = true;
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'inline-block';
+                document.getElementById('currentStatus').textContent = 'در حال یادگیری...';
+
+                this.learn();
+            }
+
+            stop() {
+                this.isLearning = false;
+                document.getElementById('startBtn').style.display = 'inline-block';
+                document.getElementById('stopBtn').style.display = 'none';
+                document.getElementById('currentStatus').textContent = 'متوقف شده';
+                this.addLog('⏸️ یادگیری متوقف شد');
+            }
+
+            reset() {
+                this.stop();
+                this.knowledge = 0;
+                this.itemsLearned = 0;
+                this.sitesVisited = 0;
+                this.age = 0;
+                this.learningTopics = [];
+                this.logEntries = [];
+                this.updateUI();
+                document.getElementById('logContainer').innerHTML = '';
+                document.getElementById('knowledgeTopics').innerHTML = '<span style="color: #999;">هنوز موضوعی یاد نگرفته است...</span>';
+                document.getElementById('currentStatus').textContent = 'در انتظار شروع';
+                document.getElementById('brainCore').textContent = '🤖';
+                this.addLog('🔄 سیستم بازنشانی شد');
+            }
+
+            async learn() {
+                while (this.isLearning) {
+                    const website = this.websites[Math.floor(Math.random() * this.websites.length)];
+                    const topic = website.topics[Math.floor(Math.random() * website.topics.length)];
+
+                    this.sitesVisited++;
+                    this.addLog(`🌐 در حال بازدید از ${website.name}...`);
+
+                    await this.sleep(1000);
+
+                    const itemsToLearn = Math.floor(Math.random() * 5) + 1;
+                    for (let i = 0; i < itemsToLearn; i++) {
+                        if (!this.isLearning) break;
+
+                        this.itemsLearned++;
+                        this.knowledge += Math.random() * 2 + 1;
+
+                        if (!this.learningTopics.includes(topic)) {
+                            this.learningTopics.push(topic);
+                            this.updateTopics();
+                        }
+
+                        this.addLog(`📖 یاد گرفتن: ${topic} از ${website.name}`);
+                        this.updateUI();
+
+                        await this.sleep(800);
+                    }
+
+                    this.age += 0.5;
+                    await this.sleep(500);
+                }
+            }
+
+            updateUI() {
+                const growthPercentage = Math.min((this.knowledge / 200) * 100, 100);
+                document.getElementById('growthFill').style.width = growthPercentage + '%';
+                document.getElementById('growthFill').textContent = Math.round(growthPercentage) + '%';
+
+                document.getElementById('itemsLearned').textContent = this.itemsLearned;
+                document.getElementById('sitesVisited').textContent = this.sitesVisited;
+
+                let level = 'مبتدی';
+                let ageLabel = 'نوزاد';
+                let emoji = '🤖';
+
+                if (this.knowledge < 20) {
+                    level = 'مبتدی';
+                    ageLabel = 'نوزاد';
+                    emoji = '👶';
+                } else if (this.knowledge < 50) {
+                    level = 'مقدماتی';
+                    ageLabel = 'کودک';
+                    emoji = '🧒';
+                } else if (this.knowledge < 100) {
+                    level = 'متوسط';
+                    ageLabel = 'نوجوان';
+                    emoji = '👦';
+                } else if (this.knowledge < 150) {
+                    level = 'پیشرفته';
+                    ageLabel = 'جوان';
+                    emoji = '👨';
+                } else {
+                    level = 'خبره';
+                    ageLabel = 'بزرگسال';
+                    emoji = '🧠';
+                }
+
+                document.getElementById('knowledgeLevel').textContent = level;
+                document.getElementById('ageIndicator').textContent = `سن: ${ageLabel}`;
+                document.getElementById('brainCore').textContent = emoji;
+            }
+
+            updateTopics() {
+                const container = document.getElementById('knowledgeTopics');
+                container.innerHTML = '';
+                this.learningTopics.forEach(topic => {
+                    const badge = document.createElement('span');
+                    badge.className = 'topic-badge';
+                    badge.textContent = topic;
+                    container.appendChild(badge);
+                });
+            }
+
+            addLog(message) {
+                const logContainer = document.getElementById('logContainer');
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                const time = new Date().toLocaleTimeString('fa-IR');
+                entry.textContent = `[${time}] ${message}`;
+                logContainer.insertBefore(entry, logContainer.firstChild);
+
+                if (logContainer.children.length > 20) {
+                    logContainer.removeChild(logContainer.lastChild);
+                }
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        const ai = new LearningAI();
+    </script>
+</body>
+</html>
